@@ -26,6 +26,7 @@ char auth[] = "Tts2WJWwPD_a1c0OejzikcYrdszZwrKk";
 #define pinRAIN 12
 #define motorPin 7
 // #define LAMpPin 6
+#define pinLightVuon 14
 bool statusRain = 0;
 int statusLight, valueDoAmDat, giatriDAKK = 0;
 float giatriNhietDo;
@@ -47,6 +48,7 @@ void setup() {
   pinMode(pinRAIN, INPUT);
   pinMode(motorPin, OUTPUT);
   // pinMode(LAMpPin, OUTPUT);
+  pinMode(pinLightVuon, OUTPUT);
 
   DebugSerial.begin(9600);
   Blynk.begin(Serial, auth);
@@ -69,6 +71,11 @@ BLYNK_WRITE(V1){
 
 BLYNK_WRITE(V2){
   valueDoAmDat = param.asInt();
+}
+
+BLYNK_WRITE(V20){
+  int pin = param.asInt();
+  digitalWrite(pinLightVuon, pin);
 }
 
 // void ModuleRTC(){
