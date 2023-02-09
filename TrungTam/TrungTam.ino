@@ -3,8 +3,6 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <BlynkSimpleStream.h> // Blynk
-// #include <Wire.h> // RTC
-// #include <RTClib.h>
 
 // RTC
 // RTC_DS1307 rtc;
@@ -25,11 +23,11 @@ char auth[] = "Tts2WJWwPD_a1c0OejzikcYrdszZwrKk";
 // Khai báo chân (Hằng số)
 #define pinNhietDo A0
 // #define pinLight 13
-// #define pinRAIN 12
-// #define motorPin 7
+#define pinRAIN 12
+#define motorPin 7
 // #define LAMpPin 6
-
-int statusLight, valueDoAmDat, statusRain, giatriDAKK = 0;
+bool statusRain = 0;
+int statusLight, valueDoAmDat, giatriDAKK = 0;
 float giatriNhietDo;
 // DateTime now;
 
@@ -46,21 +44,31 @@ void setup() {
   // dht.begin();
 
   // pinMode(pinLight, INPUT);
-  // pinMode(pinRAIN, INPUT);
-  // pinMode(motorPin, OUTPUT);
+  pinMode(pinRAIN, INPUT);
+  pinMode(motorPin, OUTPUT);
   // pinMode(LAMpPin, OUTPUT);
 
   DebugSerial.begin(9600);
   Blynk.begin(Serial, auth);
 }
 
+BLYNK_CONNECTED() {
+    // Blynk.syncAll();
+    Blynk.syncVirtual(V0); // Phải dùng câu lệnh này
+    // Blynk.syncVirtual(V1);
+    Blynk.syncVirtual(V2); // Blynk - D.A_Dat
+}
+
 BLYNK_WRITE(V0){
   giatriNhietDo = param.asFloat();
-  analogWrite(pinNhietDo, giatriNhietDo);
 }
 
 BLYNK_WRITE(V1){
-  int giatriDAKK = param.asInt();
+  giatriDAKK = param.asInt();
+}
+
+BLYNK_WRITE(V2){
+  valueDoAmDat = param.asInt();
 }
 
 // void ModuleRTC(){
@@ -92,15 +100,15 @@ void PrintSerial(){
   DebugSerial.println(valueDoAmDat);
   DebugSerial.print("Sang/Toi: ");
   DebugSerial.println(statusLight);
-}
-
-void sersorRain(){
-  // statusRain = digitalRead(pinRAIN);
   DebugSerial.print("Thoi tiet: ");
   if (statusRain == 1)
     DebugSerial.println("Mua.");
   else
     DebugSerial.println("Nang.");
+}
+
+void sensorRAIN(){
+  statusRain = digitalRead(pinRAIN);
 }
 
 // void PrintLCD(){
@@ -123,8 +131,17 @@ void sersorRain(){
 //   lcd.print(statusLight);
 // }
 
+void ModeCust(){
+
+}
+
+void ModeAuto(){
+
+}
+
 void loop() {
   Blynk.run();
+  sensorRAIN();
   PrintSerial();
 
   // ModuleRTC();
@@ -143,17 +160,23 @@ void loop() {
   // else
   //   digitalWrite(motorPin,LOW);
 
-  // if(valueDoAmDat <= 45)
-  //   if (statusRain == 0)
-  //     digitalWrite(motorPin, HIGH);
-  //   else 
-  //     digitalWrite(motorPin, LOW);
-  // else 
-  //   digitalWrite(motorPin, LOW);
+  if(valueDoAmDat <= 45)
+    if (statusRain == 0){
+      Blynk.virtualWrite(V10, 1);
+      digitalWrite(motorPin, HIGH);
+    } else {
+      Blynk.virtualWrite(V10, 0);
+      digitalWrite(motorPin, LOW);
+    }
+  else {
+    Blynk.virtualWrite(V10, 0);
+    digitalWrite(motorPin, LOW);
+  }
   
   // if(statusLight == 0)
   //   digitalWrite(LAMpPin, HIGH);
   // else 
   //   digitalWrite(LAMpPin, LOW);
   DebugSerial.println();
+  
 }
