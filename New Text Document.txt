@@ -1,0 +1,43 @@
+void EditLCD(){
+  switch(pageEdit){
+    case 0:
+      lcd.clear(); // Xóa dữ liệu LCD
+      lcd.setCursor(0,0); // Đặt con trỏ ở vị trí cột 0, hàng 0
+      lcd.print("> Chinh thoi gian");
+      lcd.setCursor(0,1);
+      lcd.print("  Hen gio");
+      lcd.setCursor(0,2);
+      lcd.print("  Thoat");
+      if(digitalRead(pinBtnDOWN))
+        pageEdit = 1;
+      break;
+    case 1:
+      lcd.clear(); // Xóa dữ liệu LCD
+      lcd.setCursor(0,0); // Đặt con trỏ ở vị trí cột 0, hàng 0
+      lcd.print("  Chinh thoi gian");
+      lcd.setCursor(0,1);
+      lcd.print("> Hen gio");
+      lcd.setCursor(0,2);
+      lcd.print("  Thoat");
+      if(digitalRead(pinBtnDOWN))
+        pageEdit = 1;
+      break;
+    case 2:
+      lcd.clear(); // Xóa dữ liệu LCD
+      lcd.setCursor(0,0); // Đặt con trỏ ở vị trí cột 0, hàng 0
+      lcd.print("  Chinh thoi gian");
+      lcd.setCursor(0,1);
+      lcd.print("  Hen gio");
+      lcd.setCursor(0,2);
+      lcd.print(">  Thoat");
+      if(digitalRead(pinBtnDOWN))
+        pageEdit = 2;
+      else if(digitalRead(pinBtnOK))
+        //nbMode = nbModeLate;
+      break;
+  }
+}
+
+    case 3: // Tùy chỉnh
+      EditLCD();
+      break;
